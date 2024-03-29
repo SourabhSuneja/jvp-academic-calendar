@@ -208,7 +208,6 @@
     // Split the events data by line breaks
     const eventsLines = eventsData.split('\n');
     let events = [];
-    let currentEvents = [];
 
     // Iterate over each line in the events data
     let foundDate = false;
@@ -217,14 +216,11 @@
         line = line.trim();
 
         // Check if the line starts with the specified date
-        if (line.startsWith(dateString)) {
+        if (line.startsWith(dateString + ":")) {
             foundDate = true;
             // Extract the events for that date
-            currentEvents = line.substring(line.indexOf(':') + 1).trim().split('\n');
-            currentEvents = currentEvents.map(event => event.trim());
-            events.push(...currentEvents);
-        } else if (foundDate) {
-            // If we've already found the date and encountered a line that doesn't start with a date, break the loop
+            const eventsString = line.substring(dateString.length + 1).trim();
+            events = eventsString.split('\n').map(event => event.trim());
             break;
         }
     }
