@@ -227,15 +227,51 @@
 
     // Function to convert date to DD/MM/YY format
     function convertToDateDDMMYY(dateString) {
-        let parts = dateString.split(/[-/.,\s]+/);
-        let day = parseInt(parts[0]);
-        let month = parseInt(parts[1]);
-        let year = parseInt(parts[2]);
-        if (year < 100) {
-            year += 2000; // Assuming year < 100 represents years after 2000
-        }
-        return `${day}/${month}/${year % 100}`;
+    // Define months as an array for conversion
+    const months = {
+        "January": "01",
+        "February": "02",
+        "March": "03",
+        "April": "04",
+        "May": "05",
+        "June": "06",
+        "July": "07",
+        "August": "08",
+        "September": "09",
+        "October": "10",
+        "November": "11",
+        "December": "12"
+    };
+
+    // Replace the ordinal numbers (st, nd, rd, th) with empty string
+    dateString = dateString.replace(/(\d+)(st|nd|rd|th)/, '$1');
+
+    // Split the date string by space, comma, or dash
+    const dateParts = dateString.split(/[\s,-]+/);
+
+    // Extract day, month, and year from the date string
+    let day, month, year;
+    if (dateParts.length === 3) {
+        day = dateParts[0].replace(/^0+/, ''); // Remove leading zeros
+        month = months[dateParts[1]];
+        year = dateParts[2].slice(-2); // Extract last two digits of the year
+    } else if (dateParts.length === 2) {
+        // If date string is like "January 2, 2024"
+        day = dateParts[1].slice(0, -1).replace(/^0+/, ''); // Remove comma and leading zeros
+        month = months[dateParts[0]];
+        year = dateParts[2].slice(-2); // Extract last two digits of the year
+    } else {
+        // If date string is like "2/1/24" or "2.1.24"
+        const parts = dateString.split(/[\/.-]+/);
+        day = parts[0].replace(/^0+/, ''); // Remove leading zeros
+        month = parts[1].replace(/^0+/, ''); // Remove leading zeros
+        year = parts[2].slice(-2); // Extract last two digits of the year
     }
+
+    // Return formatted date string in DD/MM/YY format
+    return `${day}/${month}/${year}`;
+}
+
 
     // Find the date matching dateString
     for (let line of lines) {
