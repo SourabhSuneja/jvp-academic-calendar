@@ -219,18 +219,30 @@
 
     // Define regular expressions for various date formats
     const dateFormats = [
-        /\b(\d{1,2})[-/.]\d{1,2}[-/.](\d{2}|\d{4})\b/,
+        /\b(\d{1,2})[-/.](\d{1,2})[-/.](\d{2}|\d{4})\b/,
         /\b(\d{1,2})\s(January|February|March|April|May|June|July|August|September|October|November|December)[,.\s]+(\d{2}|\d{4})\b/,
         /\b(January|February|March|April|May|June|July|August|September|October|November|December)\s(\d{1,2})[,.\s]+(\d{2}|\d{4})\b/,
         /\b(\d{1,2})(?:st|nd|rd|th)?[,.\s]+(January|February|March|April|May|June|July|August|September|October|November|December)[,.\s]+(\d{2}|\d{4})\b/
     ];
+
+    // Function to convert date to DD/MM/YY format
+    function convertToDateDDMMYY(dateString) {
+        let parts = dateString.split(/[-/.,\s]+/);
+        let day = parseInt(parts[0]);
+        let month = parseInt(parts[1]);
+        let year = parseInt(parts[2]);
+        if (year < 100) {
+            year += 2000; // Assuming year < 100 represents years after 2000
+        }
+        return `${day}/${month}/${year % 100}`;
+    }
 
     // Find the date matching dateString
     for (let line of lines) {
         if (!currentDate) {
             for (let format of dateFormats) {
                 let match = line.match(format);
-                if (match && match[0] === dateString) {
+                if (match && convertToDateDDMMYY(match[0]) === dateString) {
                     currentDate = line.trim();
                     break;
                 }
