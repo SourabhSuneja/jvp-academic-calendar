@@ -194,7 +194,7 @@
 
       // Check if the request was successful
       if (xhr.status === 200) {
-        const eventsData = xhr.responseText; alert(eventsData);
+        const eventsData = xhr.responseText;
         const events = parseEventData(eventsData, dateString);
         return events;
       } else {
