@@ -205,18 +205,28 @@ monthHeader.appendChild(nextMonthBtn);
 }
 
 function parseEventData(eventsData, dateString) {
-    const eventsLines = eventsData.split('\n');
+    const eventsLines = eventsData.split(/\n(?=\d{1,2}\/\d{1,2}\/\d{2})/);
     let events = [];
 
     for (let line of eventsLines) {
         line = line.trim();
-        if (line.startsWith(dateString)) {
-            const eventText = line.substring(line.indexOf(':') + 1).trim();
-            events.push(eventText);
+        const eventParts = line.split(':');
+        if (eventParts.length === 2) {
+            const datePart = eventParts[0].trim();
+            const eventText = eventParts[1].trim();
+            const formattedDate = formatDate(datePart); // Format the date to MM/DD/YY
+            if (formattedDate === dateString) {
+                events.push(eventText);
+            }
         }
     }
 
     return events;
+}
+
+function formatDate(datePart) {
+    const [day, month, year] = datePart.split('/');
+    return `${month}/${day}/${year}`;
 }
 
 document.addEventListener("DOMContentLoaded", function() {
