@@ -185,7 +185,7 @@
 
     function getEvents(year, month, day) {
       // Format the date to match the format in the events file
-      const dateString = `${month + 1}/${day}/${year % 100}`;
+      const dateString = `${day}/${month + 1}/${year % 100}`;
       
       // Send an AJAX request to fetch the events file
       const xhr = new XMLHttpRequest();
