@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Calendar</title>
+	<meta charset="UTF-8">
+	<meta name="description" content="A simple JavaScript calendar to make your life easier. Organise all your important events in one place. Never again miss a date !">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,400&family=Source+Sans+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<style type="text/css">
+		* {
+			box-sizing: border-box;
+		}
+		body {
+			margin: 0;
+			font-family: 'Roboto', sans-serif;
+			font-size: 16px;
+		}
+		h1, h2, h3, h4, h5, h6 {
+			font-family: 'Source Sans Pro', sans-serif;
+		}
+		#calendar {
+			margin: auto;
+			width: 80%;
+			height: 80%;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			transition: all 0.4s;
+		}
+	</style>
+</head>
+<body>
+	<div id="calendar"></div>
+	<script type="text/javascript" src="events.js"></script>
+	<script type="text/javascript" src="cal.js"></script>
+	<script type="text/javascript">
+		document.body.onload = function() {
+			var cal = document.getElementById('calendar');
+			cal.style.width = "100%";
+			cal.style.height = "100%";
+		}
+	</script>
+</body>
+</html>
