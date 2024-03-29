@@ -205,27 +205,32 @@
     }
 
     function parseEventData(eventsData, dateString) {
-      // Split the events data by line breaks
-      const eventsLines = eventsData.split('\n');
-      let events = [];
-      let currentEvents = [];
+    // Split the events data by line breaks
+    const eventsLines = eventsData.split('\n');
+    let events = [];
+    let currentEvents = [];
 
-      // Iterate over each line in the events data
-for (let line of eventsLines) {
+    // Iterate over each line in the events data
+    let foundDate = false;
+    for (let line of eventsLines) {
         // Trim any leading or trailing whitespace
         line = line.trim();
 
         // Check if the line starts with the specified date
         if (line.startsWith(dateString)) {
-          // If so, extract the events for that date
-          currentEvents = line.substring(line.indexOf(':') + 1).trim().split('\n');
-          currentEvents = currentEvents.map(event => event.trim());
-          events.push(...currentEvents);
+            foundDate = true;
+            // Extract the events for that date
+            currentEvents = line.substring(line.indexOf(':') + 1).trim().split('\n');
+            currentEvents = currentEvents.map(event => event.trim());
+            events.push(...currentEvents);
+        } else if (foundDate) {
+            // If we've already found the date and encountered a line that doesn't start with a date, break the loop
+            break;
         }
-      }
-
-      return events;
     }
+alert(events);
+    return events;
+}
   });
 </script>
 </body>
