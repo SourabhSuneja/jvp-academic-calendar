@@ -185,47 +185,42 @@ monthHeader.appendChild(nextMonthBtn);
 }
 
     function getEvents(year, month, day) {
-    // Format the date to match the format in the events file
-    const dateString = `${month + 1}/${day}/${year % 100}`;
-    
-    // Send an AJAX request to fetch the events file
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', 'events.txt', false); // Synchronous request
-    xhr.send();
-
-    // Check if the request was successful
-    if (xhr.status === 200) {
-        const eventsData = xhr.responseText;
-        const events = parseEventData(eventsData, dateString);
-        return events;
-    } else {
-        console.error('Failed to fetch events data');
-        return [];
-    }
+    return new Promise((resolve, reject) => {
+        const dateString = `${month + 1}/${day}/${year % 100}`;
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'events.txt', true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    const events = parseEventData(xhr.responseText, dateString);
+                    resolve(events);
+                } else {
+                    console.error('Failed to fetch events data');
+                    reject([]);
+                }
+            }
+        };
+        xhr.send();
+    });
 }
 
 function parseEventData(eventsData, dateString) {
-    // Split the events data by line breaks
     const eventsLines = eventsData.split('\n');
     let events = [];
-    let currentEvents = [];
 
-    // Iterate over each line in the events data
     for (let line of eventsLines) {
-        // Trim any leading or trailing whitespace
         line = line.trim();
-
-        // Check if the line starts with the specified date
         if (line.startsWith(dateString)) {
-            // If so, extract the events for that date
-            currentEvents = line.substring(line.indexOf(':') + 1).trim().split('\n');
-            currentEvents = currentEvents.map(event => event.trim());
-            events.push(...currentEvents);
+            const eventText = line.substring(line.indexOf(':') + 1).trim();
+            events.push(eventText);
         }
     }
 
     return events;
 }
+
+document.addEventListener("DOMContentLoaded", function() {
+    const calendar = document.getElementById('calendar');
   });
 </script>
 </body>
