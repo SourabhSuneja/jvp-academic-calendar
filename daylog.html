@@ -260,12 +260,17 @@
         day = dateParts[0].replace(/^0+/, ''); // Remove leading zeros
         month = months[dateParts[1]];
         year = dateParts[2].slice(-2); // Extract last two digits of the year
-    } else {
-        // If date string is like "5-1-24" or "5 Jan 2024"
-        const parts = dateString.split(/[\/.-]+/);
+    } else if (dateParts.length === 1 && dateParts[0].match(/^\d{1,2}[./-]\d{1,2}[./-]\d{2,4}$/)) {
+        // If date string is like "5-1-24" or "5/1/2024" or "5.1.2024"
+        const parts = dateParts[0].split(/[\/.-]+/);
         day = parts[0].replace(/^0+/, ''); // Remove leading zeros
-        month = months[parts[1]];
+        month = parts[1].replace(/^0+/, ''); // Remove leading zeros
         year = parts[2].slice(-2); // Extract last two digits of the year
+    } else {
+        // If date string is like "5 January, 2024" or "January 5, 2024" or "5th January, 2024"
+        day = dateParts[0].replace(/^0+/, ''); // Remove leading zeros
+        month = months[dateParts[1]];
+        year = dateParts[2].slice(-2); // Extract last two digits of the year
     }
 
     // Return formatted date string in DD/MM/YY format
