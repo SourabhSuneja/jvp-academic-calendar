@@ -227,55 +227,48 @@
 
     // Function to convert date to DD/MM/YY format
     function convertToDateDDMMYY(dateString) {
-    // Define months as an array for conversion
     const months = {
-        "January": "01",
-        "February": "02",
-        "March": "03",
-        "April": "04",
-        "May": "05",
-        "June": "06",
-        "July": "07",
-        "August": "08",
-        "September": "09",
-        "October": "10",
-        "November": "11",
-        "December": "12"
+        'January': '1',
+        'February': '2',
+        'March': '3',
+        'April': '4',
+        'May': '5',
+        'June': '6',
+        'July': '7',
+        'August': '8',
+        'September': '9',
+        'October': '10',
+        'November': '11',
+        'December': '12'
     };
 
-    // Replace the ordinal numbers (st, nd, rd, th) with empty string
-    dateString = dateString.replace(/(\d+)(st|nd|rd|th)/, '$1');
-
-    // Split the date string by space, comma, or dash
-    const dateParts = dateString.split(/[\s,-]+/);
-
-    // Extract day, month, and year from the date string
+    const dateComponents = dateString.split(/[\s,\-./]+/);
     let day, month, year;
-    if (dateParts.length === 3) {
-        day = dateParts[0].replace(/^0+/, ''); // Remove leading zeros
-        month = months[dateParts[1]];
-        year = dateParts[2].slice(-2); // Extract last two digits of the year
-    } else if (dateParts.length === 2) {
-        // If date string is like "5 Jan, 2024"
-        day = dateParts[0].replace(/^0+/, ''); // Remove leading zeros
-        month = months[dateParts[1]];
-        year = dateParts[2].slice(-2); // Extract last two digits of the year
-    } else if (dateParts.length === 1 && dateParts[0].match(/^\d{1,2}[./-]\d{1,2}[./-]\d{2,4}$/)) {
-        // If date string is like "5-1-24" or "5/1/2024" or "5.1.2024"
-        const parts = dateParts[0].split(/[\/.-]+/);
-        day = parts[0].replace(/^0+/, ''); // Remove leading zeros
-        month = parts[1].replace(/^0+/, ''); // Remove leading zeros
-        year = parts[2].slice(-2); // Extract last two digits of the year
+
+    if (dateComponents.length === 3) {
+        day = dateComponents[0];
+        month = dateComponents[1];
+        year = dateComponents[2];
     } else {
-        // If date string is like "5 January, 2024" or "January 5, 2024" or "5th January, 2024"
-        day = dateParts[0].replace(/^0+/, ''); // Remove leading zeros
-        month = months[dateParts[1]];
-        year = dateParts[2].slice(-2); // Extract last two digits of the year
+        // Handling different formats
+        day = dateComponents[0].replace(/\D/g, '');
+        month = dateComponents[1];
+        year = dateComponents[2];
     }
 
-    // Return formatted date string in DD/MM/YY format
+    day = day.replace(/^0+/, ''); // Removing leading zeros
+
+    if (month.length > 2) {
+        month = months[month];
+    } else {
+        month = month.replace(/^0+/, ''); // Removing leading zeros
+    }
+
+    year = year.slice(-2); // Extracting last two digits of the year
+
     return `${day}/${month}/${year}`;
 }
+
 
 
     // Find the date matching dateString
