@@ -1,0 +1,232 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendar App</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  .calendar {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  .month {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .month-btn {
+    cursor: pointer;
+    padding: 5px 10px;
+    border: none;
+    background-color: #ddd;
+    border-radius: 5px;
+  }
+  .month-btn:hover {
+    background-color: #ccc;
+  }
+  .days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+  }
+  .day {
+    padding: 5px;
+    text-align: center;
+    background-color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .day:hover {
+    background-color: #f0f0f0;
+  }
+  .events {
+    margin-top: 10px;
+  }
+  .event-item {
+    margin-bottom: 5px;
+  }
+</style>
+</head>
+<body>
+<div class="calendar" id="calendar"></div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const calendar = document.getElementById('calendar');
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    
+    let currentDate = new Date();
+    let currentMonth = currentDate.getMonth();
+    let currentYear = currentDate.getFullYear();
+    
+    renderCalendar(currentMonth, currentYear);
+
+    function renderCalendar(month, year) {
+      calendar.innerHTML = ''; // Clear previous calendar
+      
+      const firstDayOfMonth = new Date(year, month, 1);
+      const lastDayOfMonth = new Date(year, month + 1, 0);
+      const daysInMonth = lastDayOfMonth.getDate();
+      const startingDay = firstDayOfMonth.getDay();
+      
+      const monthHeader = document.createElement('div');
+      monthHeader.classList.add('month');
+      const prevMonthBtn = document.createElement('button');
+prevMonthBtn.classList.add('month-btn');
+prevMonthBtn.innerHTML = '&#10094;';
+prevMonthBtn.addEventListener('click', prevMonth);
+
+const nextMonthBtn = document.createElement('button');
+nextMonthBtn.classList.add('month-btn');
+nextMonthBtn.innerHTML = '&#10095;';
+nextMonthBtn.addEventListener('click', nextMonth);
+
+const monthTitle = document.createElement('h2');
+monthTitle.textContent = `${months[month]} ${year}`;
+
+monthHeader.appendChild(prevMonthBtn);
+monthHeader.appendChild(monthTitle);
+monthHeader.appendChild(nextMonthBtn);
+      calendar.appendChild(monthHeader);
+
+      const daysContainer = document.createElement('div');
+      daysContainer.classList.add('days');
+      
+      // Add day labels
+      for (let day of daysOfWeek) {
+        const dayLabel = document.createElement('div');
+        dayLabel.classList.add('day');
+        dayLabel.textContent = day;
+        daysContainer.appendChild(dayLabel);
+      }
+
+      // Fill empty days of previous month
+      for (let i = 0; i < startingDay; i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.classList.add('day');
+        emptyDay.textContent = '';
+        daysContainer.appendChild(emptyDay);
+      }
+
+      // Fill days of current month
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayElement = document.createElement('div');
+        dayElement.classList.add('day');
+        dayElement.textContent = day;
+        dayElement.setAttribute('data-day', day);
+        dayElement.addEventListener('click', () => showEvents(year, month, day));
+        daysContainer.appendChild(dayElement);
+      }
+      
+      calendar.appendChild(daysContainer);
+      
+      // Point at the current date when the calendar is opened for the first time
+      if (month === currentMonth && year === currentYear) {
+        const today = currentDate.getDate();
+        const currentDayElement = calendar.querySelector(`.day[data-day="${today}"]`);
+        currentDayElement.classList.add('current-day');
+        showEvents(year, month, today);
+      }
+    }
+    
+    function prevMonth() {
+      currentMonth -= 1;
+      if (currentMonth < 0) {
+        currentYear -= 1;
+        currentMonth = 11;
+      }
+      renderCalendar(currentMonth, currentYear);
+    }
+    
+    function nextMonth() {
+      currentMonth += 1;
+      if (currentMonth > 11) {
+        currentYear += 1;
+        currentMonth = 0;
+      }
+      renderCalendar(currentMonth, currentYear);
+    }
+
+    function showEvents(year, month, day) {
+    const eventsContainer = document.createElement('div');
+    eventsContainer.classList.add('events');
+    const events = getEvents(year, month, day);
+    if (events.length > 0) {
+        events.forEach(event => {
+            const eventItem = document.createElement('div');
+            eventItem.classList.add('event-item');
+            eventItem.textContent = event;
+            eventsContainer.appendChild(eventItem);
+        });
+    } else {
+        const noEventsMessage = document.createElement('div');
+        noEventsMessage.textContent = 'No events for this day.';
+        eventsContainer.appendChild(noEventsMessage);
+    }
+
+    const existingEventsContainer = calendar.querySelector('.events');
+    if (existingEventsContainer) {
+        existingEventsContainer.replaceWith(eventsContainer);
+    } else {
+        calendar.appendChild(eventsContainer);
+    }
+}
+
+    function getEvents(year, month, day) {
+    // Format the date to match the format in the events file
+    const dateString = `${month + 1}/${day}/${year % 100}`;
+    
+    // Send an AJAX request to fetch the events file
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', 'events.txt', false); // Synchronous request
+    xhr.send();
+
+    // Check if the request was successful
+    if (xhr.status === 200) {
+        const eventsData = xhr.responseText;
+        const events = parseEventData(eventsData, dateString);
+        return events;
+    } else {
+        console.error('Failed to fetch events data');
+        return [];
+    }
+}
+
+function parseEventData(eventsData, dateString) {
+    // Split the events data by line breaks
+    const eventsLines = eventsData.split('\n');
+    let events = [];
+    let currentEvents = [];
+
+    // Iterate over each line in the events data
+    for (let line of eventsLines) {
+        // Trim any leading or trailing whitespace
+        line = line.trim();
+
+        // Check if the line starts with the specified date
+        if (line.startsWith(dateString)) {
+            // If so, extract the events for that date
+            currentEvents = line.substring(line.indexOf(':') + 1).trim().split('\n');
+            currentEvents = currentEvents.map(event => event.trim());
+            events.push(...currentEvents);
+        }
+    }
+
+    return events;
+}
+  });
+</script>
+</body>
+</html>
