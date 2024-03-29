@@ -196,9 +196,10 @@
       if (xhr.status === 200) {
         const eventsData = xhr.responseText;
         const events = parseEventData(eventsData, dateString);
+        alert(events);
         return events;
       } else {
-        console.error('Failed to fetch events data');
+        alert('Failed to fetch events data');
         return [];
       }
     }
