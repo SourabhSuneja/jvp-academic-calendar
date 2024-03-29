@@ -83,21 +83,21 @@
       const monthHeader = document.createElement('div');
       monthHeader.classList.add('month');
       const prevMonthBtn = document.createElement('button');
-prevMonthBtn.classList.add('month-btn');
-prevMonthBtn.innerHTML = '&#10094;';
-prevMonthBtn.addEventListener('click', prevMonth);
+      prevMonthBtn.classList.add('month-btn');
+      prevMonthBtn.innerHTML = '&#10094;';
+      prevMonthBtn.addEventListener('click', prevMonth);
 
-const nextMonthBtn = document.createElement('button');
-nextMonthBtn.classList.add('month-btn');
-nextMonthBtn.innerHTML = '&#10095;';
-nextMonthBtn.addEventListener('click', nextMonth);
+      const nextMonthBtn = document.createElement('button');
+      nextMonthBtn.classList.add('month-btn');
+      nextMonthBtn.innerHTML = '&#10095;';
+      nextMonthBtn.addEventListener('click', nextMonth);
 
-const monthTitle = document.createElement('h2');
-monthTitle.textContent = `${months[month]} ${year}`;
+      const monthTitle = document.createElement('h2');
+      monthTitle.textContent = `${months[month]} ${year}`;
 
-monthHeader.appendChild(prevMonthBtn);
-monthHeader.appendChild(monthTitle);
-monthHeader.appendChild(nextMonthBtn);
+      monthHeader.appendChild(prevMonthBtn);
+      monthHeader.appendChild(monthTitle);
+      monthHeader.appendChild(nextMonthBtn);
       calendar.appendChild(monthHeader);
 
       const daysContainer = document.createElement('div');
@@ -159,72 +159,72 @@ monthHeader.appendChild(nextMonthBtn);
     }
 
     function showEvents(year, month, day) {
-    const eventsContainer = document.createElement('div');
-    eventsContainer.classList.add('events');
-    const events = getEvents(year, month, day);
-    if (events.length > 0) {
+      const eventsContainer = document.createElement('div');
+      eventsContainer.classList.add('events');
+      const events = getEvents(year, month, day);
+      if (events.length > 0) {
         events.forEach(event => {
-            const eventItem = document.createElement('div');
-            eventItem.classList.add('event-item');
-            eventItem.textContent = event;
-            eventsContainer.appendChild(eventItem);
+          const eventItem = document.createElement('div');
+          eventItem.classList.add('event-item');
+          eventItem.textContent = event;
+          eventsContainer.appendChild(eventItem);
         });
-    } else {
+      } else {
         const noEventsMessage = document.createElement('div');
         noEventsMessage.textContent = 'No events for this day.';
         eventsContainer.appendChild(noEventsMessage);
-    }
+      }
 
-    const existingEventsContainer = calendar.querySelector('.events');
-    if (existingEventsContainer) {
+      const existingEventsContainer = calendar.querySelector('.events');
+      if (existingEventsContainer) {
         existingEventsContainer.replaceWith(eventsContainer);
-    } else {
+      } else {
         calendar.appendChild(eventsContainer);
+      }
     }
-}
 
     function getEvents(year, month, day) {
-    // Format the date to match the format in the events file
-    const dateString = `${month + 1}/${day}/${year % 100}`;
-    
-    // Send an AJAX request to fetch the events file
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', 'events.txt', false); // Synchronous request
-    xhr.send();
+      // Format the date to match the format in the events file
+      const dateString = `${month + 1}/${day}/${year % 100}`;
+      
+      // Send an AJAX request to fetch the events file
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', 'events.txt', false); // Synchronous request
+      xhr.send();
 
-    // Check if the request was successful
-    if (xhr.status === 200) {
+      // Check if the request was successful
+      if (xhr.status === 200) {
         const eventsData = xhr.responseText;
         const events = parseEventData(eventsData, dateString);
         return events;
-    } else {
+      } else {
         console.error('Failed to fetch events data');
         return [];
+      }
     }
-}
 
-function parseEventData(eventsData, dateString) {
-    // Split the events data by line breaks
-    const eventsLines = eventsData.split('\n');
-    let events = [];
-    let currentEvents = [];
+    function parseEventData(eventsData, dateString) {
+      // Split the events data by line breaks
+      const eventsLines = eventsData.split('\n');
+      let events = [];
+      let currentEvents = [];
 
-    // Iterate over each line in the events data
-    for (let line of eventsLines) {
+      // Iterate over each line in the events data
+for (let line of eventsLines) {
         // Trim any leading or trailing whitespace
         line = line.trim();
 
         // Check if the line starts with the specified date
         if (line.startsWith(dateString)) {
-            // If so, extract the events for that date
-            currentEvents = line.substring(line.indexOf(':') + 1).trim().split('\n');
-            currentEvents = currentEvents.map(event => event.trim());
-            events.push(...currentEvents);
+          // If so, extract the events for that date
+          currentEvents = line.substring(line.indexOf(':') + 1).trim().split('\n');
+          currentEvents = currentEvents.map(event => event.trim());
+          events.push(...currentEvents);
         }
-    }
+      }
 
-    return events;
-}
+      return events;
+    }
   });
 </script>
 </body>
