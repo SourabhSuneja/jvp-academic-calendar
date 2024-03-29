@@ -18,3 +18,12 @@ Science: Ch-3 Digestion started
 5-1-24:
 English homework given
 Maths homework given
+
+1 Jan 2024:
+Some event happened
+
+January 2, 2024:
+Another event happened
+
+3.1.24:
+One more event happened
